@@ -11,10 +11,11 @@ class TNode:
     def __repr__(self):
         return repr(self.children)
 
+
 class PaTrie:
 
     def __init__(self):
-        self.root = TNode(None)
+        self.root = None
 
     def find(self, word):
         cur = self.root
@@ -30,12 +31,11 @@ class PaTrie:
         return i == len(word)
 
     def insert(self, word):
-        self._insert(word)
-        if "" in self.root.children:
-            del self.root.children[""]
-
-    def _insert(self, word):
         cur = self.root
+        if cur is None:
+            self.root = TNode({ word: None })
+            return
+
         i = 0
         while not cur.is_leaf():
             for label, child in cur.children.items():
@@ -66,6 +66,8 @@ class PaTrie:
     def __str__(self):
         s = []
         def _str(tnode, sofar, label, prepend):
+            if tnode is None:
+                return
             if tnode.is_leaf():
                 if label:
                     s.append(prepend + "+ " + label)
@@ -74,9 +76,11 @@ class PaTrie:
                 s.append(prepend + "+ " + label)
                 for label, child in tnode.children.items():
                     _str(child, sofar + label, label, prepend + "  ")
-        _str(self.root, "", "", "")
 
-        return "PaTrie:\n" + "\n".join(s) + "\n"
+        if self.root is not None:
+            _str(self.root, "", "", "")
+
+        return "\n".join(s)
 
 
     def common_prefix_len(self, a, b):
@@ -94,5 +98,7 @@ if __name__ == "__main__":
     words = "autobus", "auto", "abraka", "dabra", "abrakadabra", "honza", "honirna", "honicka", "hony", "ho"
     for w in words:
         t.insert(w)
-        print(t)
+        print("AFTER INSERTING", w)
         print(t.root)
+        print(t)
+        print()
