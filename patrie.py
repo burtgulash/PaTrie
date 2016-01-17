@@ -17,11 +17,17 @@ class PaTrie:
     def __init__(self):
         self.root = None
 
-    def find(self, word):
+    def __contains__(self, word):
         cur = self.root
+        if cur is None:
+            return False
+
         i = 0
-        while not cur.is_leaf():
+        while cur is not None and not cur.is_leaf():
             for label, child in cur.children.items():
+                if len(label) == 0 and i < len(word):
+                    continue
+
                 if word[i:i + len(label)] == label:
                     cur = child
                     i += len(label)
@@ -95,7 +101,7 @@ class PaTrie:
 
 if __name__ == "__main__":
     t = PaTrie()
-    words = "autobus", "auto", "abraka", "dabra", "abrakadabra", "honza", "honirna", "honicka", "hony", "ho"
+    words = "autobus", "auto", "abraka", "dabra", "abrakadabra", "honza", "honirna", "honicka", "hony", "ho", "h"
     for w in words:
         t.insert(w)
         print("AFTER INSERTING", w)
